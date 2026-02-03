@@ -31,7 +31,7 @@ func main() {
 		"0.1.0",
 	)
 
-	tools.Register(mcpServer, graphClient)
+	tools.Register(mcpServer, graphClient, tokenManager)
 
 	if err := server.ServeStdio(mcpServer); err != nil {
 		log.Fatalf("Server error: %v", err)

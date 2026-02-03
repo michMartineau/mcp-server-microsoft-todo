@@ -28,9 +28,10 @@ const (
 
 // TokenManager handles OAuth token lifecycle.
 type TokenManager struct {
-	clientID   string
-	tokensPath string
-	httpClient *http.Client
+	clientID         string
+	tokensPath       string
+	httpClient       *http.Client
+	PendingDeviceCode *types.DeviceCodeResponse
 }
 
 // NewTokenManager creates a new token manager.
@@ -148,7 +149,7 @@ func (tm *TokenManager) GetValidToken(ctx context.Context) (string, error) {
 // It returns immediately with instructions for the user.
 func (tm *TokenManager) DeviceCodeLogin(ctx context.Context) error {
 	// Step 1: Request device code
-	deviceCode, err := tm.requestDeviceCode(ctx)
+	deviceCode, err := tm.RequestDeviceCode(ctx)
 	if err != nil {
 		return fmt.Errorf("requesting device code: %w", err)
 	}
@@ -158,7 +159,7 @@ func (tm *TokenManager) DeviceCodeLogin(ctx context.Context) error {
 	fmt.Printf("\nWaiting for authentication (expires in %d seconds)...\n", deviceCode.ExpiresIn)
 
 	// Step 2: Poll for token
-	tokens, err := tm.pollForToken(ctx, deviceCode)
+	tokens, err := tm.PollForToken(ctx, deviceCode)
 	if err != nil {
 		return fmt.Errorf("polling for token: %w", err)
 	}
@@ -178,7 +179,8 @@ func (tm *TokenManager) DeviceCodeLogin(ctx context.Context) error {
 	return nil
 }
 
-func (tm *TokenManager) requestDeviceCode(ctx context.Context) (*types.DeviceCodeResponse, error) {
+// RequestDeviceCode initiates the device code flow and returns the device code response.
+func (tm *TokenManager) RequestDeviceCode(ctx context.Context) (*types.DeviceCodeResponse, error) {
 	data := url.Values{
 		"client_id": {tm.clientID},
 		"scope":     {scopes},
@@ -212,7 +214,8 @@ func (tm *TokenManager) requestDeviceCode(ctx context.Context) (*types.DeviceCod
 	return &deviceCode, nil
 }
 
-func (tm *TokenManager) pollForToken(ctx context.Context, deviceCode *types.DeviceCodeResponse) (*types.TokenResponse, error) {
+// PollForToken polls Microsoft's token endpoint until the user completes authentication.
+func (tm *TokenManager) PollForToken(ctx context.Context, deviceCode *types.DeviceCodeResponse) (*types.TokenResponse, error) {
 	interval := time.Duration(deviceCode.Interval) * time.Second
 	if interval == 0 {
 		interval = 5 * time.Second
