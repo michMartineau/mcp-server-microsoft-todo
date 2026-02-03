@@ -7,9 +7,9 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
+	"github.com/michMartineau/ms-todo-mcp/types"
 
 	"github.com/michMartineau/ms-todo-mcp/auth"
-	"github.com/michMartineau/ms-todo-mcp/types"
 )
 
 func loginTool(tm *auth.TokenManager) server.ServerTool {
@@ -50,11 +50,38 @@ func loginCompleteTool(tm *auth.TokenManager) server.ServerTool {
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		// TODO(human): Implement the login completion logic.
-		// Use tm.PendingDeviceCode, tm.PollForToken, and tm.SaveTokens.
-		// Clear tm.PendingDeviceCode when done.
-		// Return a success or error message as a CallToolResult.
-		return nil, nil
+		if tm.PendingDeviceCode == nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "No login in progress. Call 'login' first."}},
+				IsError: true,
+			}, nil
+		}
+
+		tokenResp, err := tm.PollForToken(ctx, tm.PendingDeviceCode)
+		if err != nil {
+			tm.PendingDeviceCode = nil
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Authentication failed: %s", err)}},
+				IsError: true,
+			}, nil
+		}
+
+		tokens := &types.StoredTokens{
+			AccessToken:  tokenResp.AccessToken,
+			RefreshToken: tokenResp.RefreshToken,
+			ExpiresAt:    time.Now().Add(time.Duration(tokenResp.ExpiresIn) * time.Second),
+		}
+		if err := tm.SaveTokens(tokens); err != nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Failed to save tokens: %s", err)}},
+				IsError: true,
+			}, nil
+		}
+
+		tm.PendingDeviceCode = nil
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Authentication successful! You can now use Microsoft To-Do tools."}},
+		}, nil
 	}
 
 	return server.ServerTool{Tool: tool, Handler: handler}
