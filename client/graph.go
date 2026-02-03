@@ -102,17 +102,32 @@ func (c *GraphClient) ListTasks(ctx context.Context, listID string) ([]types.Tod
 func (c *GraphClient) CreateTask(ctx context.Context, listID string, title string, body string, importance string, dueDate string) (*types.TodoTask, error) {
 	url := fmt.Sprintf("%s/me/todo/lists/%s/tasks", baseURL, listID)
 
-	update := map[string]string{"title": title, "importance": importance, "dueDate": dueDate}
-	payload, err := json.Marshal(update)
+	task := map[string]interface{}{
+		"title": title, // always required
+	}
+	if importance != "" {
+		task["importance"] = importance
+	}
+	if body != "" {
+		task["body"] = types.ItemBody{Content: body, ContentType: "text"}
+	}
+	if dueDate != "" {
+		task["dueDateTime"] = types.DateTimeZone{DateTime: dueDate, TimeZone: "UTC"}
+	}
+
+	payload, err := json.Marshal(task)
+	if err != nil {
+		return nil, err
+	}
 	respBody, err := c.doRequest(ctx, "POST", url, bytes.NewReader(payload))
 	if err != nil {
 		return nil, err
 	}
-	var task types.TodoTask
-	if err := json.Unmarshal(respBody, &task); err != nil {
+	var respTask types.TodoTask
+	if err := json.Unmarshal(respBody, &respTask); err != nil {
 		return nil, fmt.Errorf("parsing updated task: %w", err)
 	}
-	return &task, nil
+	return &respTask, nil
 }
 
 // CompleteTask marks a task as completed.
