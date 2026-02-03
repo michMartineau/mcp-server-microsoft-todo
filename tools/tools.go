@@ -18,5 +18,6 @@ func Register(srv *server.MCPServer, graphClient *client.GraphClient, tokenManag
 		createTaskTool(graphClient),
 		completeTaskTool(graphClient),
 		deleteTaskTool(graphClient),
+		createListTool(graphClient),
 	)
 }

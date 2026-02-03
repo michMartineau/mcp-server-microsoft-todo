@@ -152,6 +152,25 @@ func (c *GraphClient) CompleteTask(ctx context.Context, listID, taskID string) (
 	return &task, nil
 }
 
+// CreateList creates a new task list and returns it.
+func (c *GraphClient) CreateList(ctx context.Context, displayName string) (*types.TodoTaskList, error) {
+	payload, err := json.Marshal(map[string]string{"displayName": displayName})
+	if err != nil {
+		return nil, fmt.Errorf("marshaling list: %w", err)
+	}
+
+	respBody, err := c.doRequest(ctx, "POST", baseURL+"/me/todo/lists", bytes.NewReader(payload))
+	if err != nil {
+		return nil, err
+	}
+
+	var list types.TodoTaskList
+	if err := json.Unmarshal(respBody, &list); err != nil {
+		return nil, fmt.Errorf("parsing created list: %w", err)
+	}
+	return &list, nil
+}
+
 // DeleteTask removes a task from a list.
 func (c *GraphClient) DeleteTask(ctx context.Context, listID, taskID string) error {
 	url := fmt.Sprintf("%s/me/todo/lists/%s/tasks/%s", baseURL, listID, taskID)
