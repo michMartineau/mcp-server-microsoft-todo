@@ -1,7 +1,6 @@
 # mcp-server-microsoft-todo
 
-In progress Vibecoding with claude code ("outputStyle": "Learning").
-The goal is to propose a mcp server for Microsoft TODO
+A Vibecoded mcp server for Microsoft TODO written with claude code ("outputStyle": "Learning").
 
 ## Features
 
