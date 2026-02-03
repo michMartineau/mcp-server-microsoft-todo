@@ -98,7 +98,6 @@ func (c *GraphClient) ListTasks(ctx context.Context, listID string) ([]types.Tod
 	return resp.Value, nil
 }
 
-// TODO(human): Implement CreateTask
 // CreateTask creates a new task in the specified list and returns the created task.
 func (c *GraphClient) CreateTask(ctx context.Context, listID string, title string, body string, importance string, dueDate string) (*types.TodoTask, error) {
 	url := fmt.Sprintf("%s/me/todo/lists/%s/tasks", baseURL, listID)
