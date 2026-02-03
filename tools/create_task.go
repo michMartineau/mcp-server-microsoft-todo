@@ -41,7 +41,29 @@ func createTaskTool(graphClient *client.GraphClient) server.ServerTool {
 
 	// TODO(human): Implement the create_task handler
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		return nil, fmt.Errorf("not implemented")
+		listID, _ := request.Params.Arguments["list_id"].(string)
+		title, _ := request.Params.Arguments["title"].(string)
+		body, _ := request.Params.Arguments["body"].(string)
+		importance, _ := request.Params.Arguments["importance"].(string)
+		dueDate, _ := request.Params.Arguments["due_date"].(string)
+		if listID == "" || title == "" {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Error: list_id and title are required"}},
+				IsError: true,
+			}, nil
+		}
+
+		err := graphClient.CreateTask(ctx, listID, title, body, importance, dueDate)
+		if err != nil {
+			return &mcp.CallToolResult{
+				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: fmt.Sprintf("Error: %s", err)}},
+				IsError: true,
+			}, nil
+		}
+
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Task deleted successfully."}},
+		}, nil
 	}
 
 	return server.ServerTool{Tool: tool, Handler: handler}
