@@ -7,7 +7,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/michMartineau/ms-todo-mcp/client"
+	"github.com/michMartineau/mcp-server-microsoft-todo/client"
 )
 
 func createTaskTool(graphClient *client.GraphClient) server.ServerTool {

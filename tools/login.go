@@ -7,9 +7,9 @@ import (
 
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"github.com/michMartineau/ms-todo-mcp/types"
+	"github.com/michMartineau/mcp-server-microsoft-todo/types"
 
-	"github.com/michMartineau/ms-todo-mcp/auth"
+	"github.com/michMartineau/mcp-server-microsoft-todo/auth"
 )
 
 func loginTool(tm *auth.TokenManager) server.ServerTool {

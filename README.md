@@ -31,9 +31,9 @@ A Vibecoded mcp server for Microsoft TODO written with claude code ("outputStyle
 ## Installation
 
 ```bash
-git clone https://github.com/michMartineau/ms-todo-mcp.git
-cd ms-todo-mcp
-go build -o ms-todo-mcp
+git clone https://github.com/michMartineau/mcp-server-microsoft-todo.git
+cd mcp-server-microsoft-todo
+go build -o mcp-server-microsoft-todo
 ```
 
 ## Configuration
@@ -49,7 +49,7 @@ Add the following to your Claude Desktop configuration file:
 {
   "mcpServers": {
     "microsoft-todo": {
-      "command": "/absolute/path/to/ms-todo-mcp",
+      "command": "/absolute/path/to/mcp-server-microsoft-todo",
       "env": {
         "MS_TODO_CLIENT_ID": "your-azure-client-id-here"
       }
@@ -58,7 +58,7 @@ Add the following to your Claude Desktop configuration file:
 }
 ```
 
-Replace `/absolute/path/to/ms-todo-mcp` with the actual path to the compiled binary and `your-azure-client-id-here` with the client ID from your Azure app registration.
+Replace `/absolute/path/to/mcp-server-microsoft-todo` with the actual path to the compiled binary and `your-azure-client-id-here` with the client ID from your Azure app registration.
 
 ### Authentication
 
@@ -67,7 +67,7 @@ On first use, the server will initiate the **device code flow**:
 1. Claude will display a URL and a one-time code
 2. Open the URL in your browser and enter the code
 3. Sign in with your Microsoft account and grant permissions
-4. The server stores tokens locally at `~/.config/ms-todo-mcp/tokens.json`
+4. The server stores tokens locally at `~/.config/mcp-server-microsoft-todo/tokens.json`
 
 Tokens refresh automatically — you should only need to authenticate once.
 
@@ -84,7 +84,7 @@ Tokens refresh automatically — you should only need to authenticate once.
 ## Architecture
 
 ```
-Claude ←→ MCP Protocol (stdio) ←→ ms-todo-mcp ←→ Microsoft Graph API
+Claude ←→ MCP Protocol (stdio) ←→ mcp-server-microsoft-todo ←→ Microsoft Graph API
 ```
 
 The server communicates with Claude over stdin/stdout using the [Model Context Protocol](https://modelcontextprotocol.io/), and calls the [Microsoft Graph API](https://learn.microsoft.com/en-us/graph/api/resources/todo-overview) to manage To-Do tasks.
@@ -98,17 +98,17 @@ Built with [mcp-go](https://github.com/mark3labs/mcp-go).
 go mod tidy
 
 # Build
-go build -o ms-todo-mcp
+go build -o mcp-server-microsoft-todo
 
 # Run directly (for testing)
-MS_TODO_CLIENT_ID=your-client-id ./ms-todo-mcp
+MS_TODO_CLIENT_ID=your-client-id ./mcp-server-microsoft-todo
 ```
 
 See [docs/DESIGN.md](docs/DESIGN.md) for architecture details and [docs/OAUTH.md](docs/OAUTH.md) for the full OAuth2 flow documentation.
 
 ## Security
 
-- Tokens are stored with restricted permissions (`0600`) at `~/.config/ms-todo-mcp/tokens.json`
+- Tokens are stored with restricted permissions (`0600`) at `~/.config/mcp-server-microsoft-todo/tokens.json`
 - No client secret is required (public client using device code flow)
 - Only the `Tasks.ReadWrite` scope is requested — the server cannot access mail, calendar, or other data
 

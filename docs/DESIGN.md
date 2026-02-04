@@ -173,7 +173,7 @@ When you ask Claude: *"Show me my tasks in the Groceries list"*
 
 ## Security Considerations
 
-1. **Tokens stored locally** in `~/.config/ms-todo-mcp/tokens.json` with `0600` permissions
+1. **Tokens stored locally** in `~/.config/mcp-server-microsoft-todo/tokens.json` with `0600` permissions
 2. **No client secret** - uses public client (device code flow)
 3. **Minimal scopes** - only `Tasks.ReadWrite` and `offline_access`
 4. **Refresh tokens** allow long-term access without re-authenticating

@@ -8,10 +8,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"time"
 
-	"github.com/michMartineau/ms-todo-mcp/auth"
-	"github.com/michMartineau/ms-todo-mcp/types"
+	"github.com/michMartineau/mcp-server-microsoft-todo/auth"
+	"github.com/michMartineau/mcp-server-microsoft-todo/types"
 )
 
 const baseURL = "https://graph.microsoft.com/v1.0"
@@ -69,13 +70,17 @@ func (c *GraphClient) doRequest(ctx context.Context, method, url string, body io
 	return respBody, nil
 }
 
-// ListTodoLists returns all the user's To-Do task lists, following pagination.
-func (c *GraphClient) ListTodoLists(ctx context.Context) ([]types.TodoTaskList, error) {
+// ListTodoLists returns the user's To-Do task lists, following pagination.
+// If filter is non-empty, it is passed as an OData $filter query parameter.
+func (c *GraphClient) ListTodoLists(ctx context.Context, filter string) ([]types.TodoTaskList, error) {
 	var allLists []types.TodoTaskList
-	url := baseURL + "/me/todo/lists"
+	u := baseURL + "/me/todo/lists"
+	if filter != "" {
+		u += "?$filter=" + url.QueryEscape(filter)
+	}
 
-	for url != "" {
-		body, err := c.doRequest(ctx, "GET", url, nil)
+	for u != "" {
+		body, err := c.doRequest(ctx, "GET", u, nil)
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +90,7 @@ func (c *GraphClient) ListTodoLists(ctx context.Context) ([]types.TodoTaskList, 
 			return nil, fmt.Errorf("parsing task lists: %w", err)
 		}
 		allLists = append(allLists, resp.Value...)
-		url = resp.NextLink
+		u = resp.NextLink
 	}
 	return allLists, nil
 }

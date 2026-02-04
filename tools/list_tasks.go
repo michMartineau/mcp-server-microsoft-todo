@@ -8,8 +8,8 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/michMartineau/ms-todo-mcp/client"
-	"github.com/michMartineau/ms-todo-mcp/types"
+	"github.com/michMartineau/mcp-server-microsoft-todo/client"
+	"github.com/michMartineau/mcp-server-microsoft-todo/types"
 )
 
 func listTasksTool(graphClient *client.GraphClient) server.ServerTool {

@@ -1,4 +1,4 @@
-module github.com/michMartineau/ms-todo-mcp
+module github.com/michMartineau/mcp-server-microsoft-todo
 
 go 1.23.0
 

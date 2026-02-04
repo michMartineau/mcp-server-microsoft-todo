@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/michMartineau/ms-todo-mcp/types"
+	"github.com/michMartineau/mcp-server-microsoft-todo/types"
 )
 
 const (
@@ -41,7 +41,7 @@ func NewTokenManager(clientID string) (*TokenManager, error) {
 		return nil, fmt.Errorf("getting config dir: %w", err)
 	}
 
-	tokensDir := filepath.Join(configDir, "ms-todo-mcp")
+	tokensDir := filepath.Join(configDir, "mcp-server-microsoft-todo")
 	if err := os.MkdirAll(tokensDir, 0700); err != nil {
 		return nil, fmt.Errorf("creating tokens dir: %w", err)
 	}

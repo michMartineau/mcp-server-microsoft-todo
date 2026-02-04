@@ -7,9 +7,9 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/michMartineau/ms-todo-mcp/auth"
-	"github.com/michMartineau/ms-todo-mcp/client"
-	"github.com/michMartineau/ms-todo-mcp/tools"
+	"github.com/michMartineau/mcp-server-microsoft-todo/auth"
+	"github.com/michMartineau/mcp-server-microsoft-todo/client"
+	"github.com/michMartineau/mcp-server-microsoft-todo/tools"
 )
 
 func main() {

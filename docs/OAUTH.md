@@ -210,14 +210,14 @@ return tokenResp.AccessToken, nil
 1. **First login:**
    ```bash
    # Build and run login
-   go build -o ms-todo-mcp
-   ./ms-todo-mcp login
+   go build -o mcp-server-microsoft-todo
+   ./mcp-server-microsoft-todo login
    # Follow the browser instructions
    ```
 
 2. **Check tokens saved:**
    ```bash
-   cat ~/.config/ms-todo-mcp/tokens.json
+   cat ~/.config/mcp-server-microsoft-todo/tokens.json
    ```
 
 3. **Force token expiry (for testing):**
@@ -227,6 +227,6 @@ return tokenResp.AccessToken, nil
 
 4. **Run a command that needs a token:**
    ```bash
-   ./ms-todo-mcp list-lists
+   ./mcp-server-microsoft-todo list-lists
    # Should trigger refresh if token expired
    ```

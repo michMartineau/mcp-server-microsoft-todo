@@ -4,8 +4,8 @@ package tools
 import (
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/michMartineau/ms-todo-mcp/auth"
-	"github.com/michMartineau/ms-todo-mcp/client"
+	"github.com/michMartineau/mcp-server-microsoft-todo/auth"
+	"github.com/michMartineau/mcp-server-microsoft-todo/client"
 )
 
 // Register adds all Microsoft To-Do tools to the MCP server.
