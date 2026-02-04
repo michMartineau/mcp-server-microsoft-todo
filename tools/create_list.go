@@ -22,7 +22,7 @@ func createListTool(graphClient *client.GraphClient) server.ServerTool {
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		displayName, _ := request.Params.Arguments["display_name"].(string)
+		displayName := request.GetString("display_name", "")
 		if displayName == "" {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Error: display_name is required"}},

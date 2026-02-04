@@ -40,11 +40,11 @@ func createTaskTool(graphClient *client.GraphClient) server.ServerTool {
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		listID, _ := request.Params.Arguments["list_id"].(string)
-		title, _ := request.Params.Arguments["title"].(string)
-		body, _ := request.Params.Arguments["body"].(string)
-		importance, _ := request.Params.Arguments["importance"].(string)
-		dueDate, _ := request.Params.Arguments["due_date"].(string)
+		listID := request.GetString("list_id", "")
+		title := request.GetString("title", "")
+		body := request.GetString("body", "")
+		importance := request.GetString("importance", "")
+		dueDate := request.GetString("due_date", "")
 		if listID == "" || title == "" {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Error: list_id and title are required"}},

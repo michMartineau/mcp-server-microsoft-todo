@@ -69,33 +69,46 @@ func (c *GraphClient) doRequest(ctx context.Context, method, url string, body io
 	return respBody, nil
 }
 
-// ListTodoLists returns all the user's To-Do task lists.
+// ListTodoLists returns all the user's To-Do task lists, following pagination.
 func (c *GraphClient) ListTodoLists(ctx context.Context) ([]types.TodoTaskList, error) {
-	body, err := c.doRequest(ctx, "GET", baseURL+"/me/todo/lists", nil)
-	if err != nil {
-		return nil, err
-	}
+	var allLists []types.TodoTaskList
+	url := baseURL + "/me/todo/lists"
 
-	var resp types.TodoTaskListsResponse
-	if err := json.Unmarshal(body, &resp); err != nil {
-		return nil, fmt.Errorf("parsing task lists: %w", err)
+	for url != "" {
+		body, err := c.doRequest(ctx, "GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var resp types.TodoTaskListsResponse
+		if err := json.Unmarshal(body, &resp); err != nil {
+			return nil, fmt.Errorf("parsing task lists: %w", err)
+		}
+		allLists = append(allLists, resp.Value...)
+		url = resp.NextLink
 	}
-	return resp.Value, nil
+	return allLists, nil
 }
 
-// ListTasks returns all tasks in a specific task list.
+// ListTasks returns all tasks in a specific task list, following pagination.
 func (c *GraphClient) ListTasks(ctx context.Context, listID string) ([]types.TodoTask, error) {
+	var allTasks []types.TodoTask
 	url := fmt.Sprintf("%s/me/todo/lists/%s/tasks", baseURL, listID)
-	body, err := c.doRequest(ctx, "GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
 
-	var resp types.TodoTasksResponse
-	if err := json.Unmarshal(body, &resp); err != nil {
-		return nil, fmt.Errorf("parsing tasks: %w", err)
+	for url != "" {
+		body, err := c.doRequest(ctx, "GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		var resp types.TodoTasksResponse
+		if err := json.Unmarshal(body, &resp); err != nil {
+			return nil, fmt.Errorf("parsing tasks: %w", err)
+		}
+		allTasks = append(allTasks, resp.Value...)
+		url = resp.NextLink
 	}
-	return resp.Value, nil
+	return allTasks, nil
 }
 
 // CreateTask creates a new task in the specified list and returns the created task.

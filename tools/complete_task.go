@@ -27,8 +27,8 @@ func completeTaskTool(graphClient *client.GraphClient) server.ServerTool {
 	)
 
 	handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-		listID, _ := request.Params.Arguments["list_id"].(string)
-		taskID, _ := request.Params.Arguments["task_id"].(string)
+		listID := request.GetString("list_id", "")
+		taskID := request.GetString("task_id", "")
 		if listID == "" || taskID == "" {
 			return &mcp.CallToolResult{
 				Content: []mcp.Content{mcp.TextContent{Type: "text", Text: "Error: list_id and task_id are required"}},
